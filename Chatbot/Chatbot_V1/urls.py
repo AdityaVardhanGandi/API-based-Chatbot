@@ -17,7 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from Home.views import chat, about, chatAPI, home
+from Chatbot_V1.views import chat, about, chatAPI, home
 
 urlpatterns = [
     path('', home, name='Home'),

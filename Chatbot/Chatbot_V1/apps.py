@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class HomeConfig(AppConfig):
+class ChatbotV1Config(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "Home"
+    name = "Chatbot_V1"

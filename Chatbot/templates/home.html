@@ -2,20 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Me</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gemini Chat Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
       :root {
         --bg-main: #0a0911;
         --bg-chat: #15121c;
+        --bg-input: #181022;
         --color-text: #f3eaff;
+        --shadow: 0 8px 32px #a259ff33;
       }
       body.light-mode {
         --bg-main: #f7f7f8;
         --bg-chat: #fff;
+        --bg-input: #f4f4f5;
         --color-text: #222;
+        --shadow: 0 8px 32px #a259ff11;
       }
       body {
         background: var(--bg-main);
@@ -39,6 +42,73 @@
       @keyframes bg-move {
         0% { background-position: 60% 40%, 30% 80%; }
         100% { background-position: 70% 60%, 20% 70%; }
+      }
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 270px;
+        height: 100vh;
+        background: #120c1c;
+        color: #fff;
+        box-shadow: 2px 0 32px #a259ff33;
+        z-index: 1002;
+        transition: left 0.35s cubic-bezier(.77,0,.18,1);
+        display: flex;
+        flex-direction: column;
+        padding: 32px 18px 18px 18px;
+      }
+      .sidebar.open {
+        left: 0;
+      }
+      .sidebar .close-btn {
+        background: none;
+        border: none;
+        color: #a259ff;
+        font-size: 2rem;
+        align-self: flex-end;
+        cursor: pointer;
+        margin-bottom: 24px;
+        transition: color 0.2s;
+      }
+      .sidebar .close-btn:hover {
+        color: #fff;
+        text-shadow: 0 0 8px #a259ff;
+      }
+      .sidebar h2 {
+        font-size: 1.3rem;
+        margin-bottom: 18px;
+        color: #a259ff;
+        font-weight: 700;
+        text-align: center;
+      }
+      .sidebar a {
+        color: #e0d7f7;
+        text-decoration: none;
+        font-size: 1.08rem;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: flex-start;
+        padding: 8px 0 8px 8px;
+        border-radius: 8px;
+        transition: background 0.2s, color 0.2s, box-shadow 0.3s;
+      }
+      .sidebar a:hover {
+        background: #23143a;
+        color: #a259ff;
+        box-shadow: 0 0 12px #a259ff55;
+      }
+      .sidebar .sidebar-icon {
+        width: 22px;
+        height: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .sidebar:not(.open) {
+        pointer-events: none;
       }
       .topbar {
         position: fixed;
@@ -155,78 +225,23 @@
         user-select: none;
         font-weight: 500;
       }
-      .sidebar {
+      .home-container {
         position: fixed;
-        top: 0;
-        left: -300px;
-        width: 270px;
-        height: 100vh;
-        background: #120c1c;
-        color: #fff;
-        box-shadow: 2px 0 32px #a259ff33;
-        z-index: 1002;
-        transition: left 0.35s cubic-bezier(.77,0,.18,1);
+        top: 64px;
+        left: 0;
+        width: 100vw;
+        height: calc(100vh - 64px);
+        background: transparent;
         display: flex;
         flex-direction: column;
-        padding: 32px 18px 18px 18px;
-      }
-      .sidebar.open {
-        left: 0;
-      }
-      .sidebar .close-btn {
-        background: none;
-        border: none;
-        color: #a259ff;
-        font-size: 2rem;
-        align-self: flex-end;
-        cursor: pointer;
-        margin-bottom: 24px;
-        transition: color 0.2s;
-      }
-      .sidebar .close-btn:hover {
-        color: #fff;
-        text-shadow: 0 0 8px #a259ff;
-      }
-      .sidebar h2 {
-        font-size: 1.3rem;
-        margin-bottom: 18px;
-        color: #a259ff;
-        font-weight: 700;
-        text-align: center;
-      }
-      .sidebar a {
-        color: #e0d7f7;
-        text-decoration: none;
-        font-size: 1.08rem;
-        margin-bottom: 18px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        justify-content: flex-start;
-        padding: 8px 0 8px 8px;
-        border-radius: 8px;
-        transition: background 0.2s, color 0.2s, box-shadow 0.3s;
-      }
-      .sidebar a:hover {
-        background: #23143a;
-        color: #a259ff;
-        box-shadow: 0 0 12px #a259ff55;
-      }
-      .sidebar .sidebar-icon {
-        width: 22px;
-        height: 22px;
-        display: inline-flex;
         align-items: center;
         justify-content: center;
+        z-index: 1;
       }
-      .sidebar:not(.open) {
-        pointer-events: none;
-      }
-      .about-content {
+      .home-content {
         position: relative;
         z-index: 2;
         max-width: 600px;
-        margin: 90px auto 0 auto;
         background: rgba(24, 16, 34, 0.95);
         border-radius: 28px;
         box-shadow: 0 8px 32px #a259ff33, 0 0 40px #6d28d944;
@@ -239,8 +254,26 @@
         from { opacity: 0; transform: translateY(40px);}
         to { opacity: 1; transform: translateY(0);}
       }
+      .start-btn {
+        background: linear-gradient(90deg, #a259ff 0%, #6d28d9 100%);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 16px 44px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 32px;
+        box-shadow: 0 4px 24px #a259ff44;
+        transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+      }
+      .start-btn:hover {
+        background: linear-gradient(90deg, #6d28d9 0%, #a259ff 100%);
+        box-shadow: 0 8px 32px #a259ff33;
+        transform: scale(1.07) rotate(-2deg);
+      }
       @media (max-width: 700px) {
-        .about-content {
+        .home-content {
           max-width: 98vw;
           padding: 24px 4vw 18px 4vw;
         }
@@ -282,15 +315,14 @@
       <h2>Menu</h2>
       <a href="/chat"><span class="sidebar-icon"><svg width="20" height="20" fill="none" stroke="#a259ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M12 2v8"/></svg></span>Chat</a>
       <a href="/about"><span class="sidebar-icon"><svg width="20" height="20" fill="none" stroke="#a259ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><circle cx="12" cy="8" r="1"/></svg></span>About</a>
-      <a href="https://github.com/" target="_blank"><span class="sidebar-icon"><svg width="20" height="20" fill="none" stroke="#a259ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.66-.22.66-.48 0-.24-.01-.87-.01-1.7-2.78.6-3.37-1.34-3.37-1.34-.45-1.15-1.1-1.46-1.1-1.46-.9-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0 1 12 6.8c.85.004 1.71.12 2.51.35 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.85-2.34 4.7-4.57 4.95.36.31.68.92.68 1.85 0 1.33-.01 2.41-.01 2.74 0 .27.16.58.67.48A10.01 10.01 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg></span>GitHub</a>
+      <a href="https://github.com/AdityaVardhanGandi/API-based-Chatbot.git" target="_blank"><span class="sidebar-icon"><svg width="20" height="20" fill="none" stroke="#a259ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.66-.22.66-.48 0-.24-.01-.87-.01-1.7-2.78.6-3.37-1.34-3.37-1.34-.45-1.15-1.1-1.46-1.1-1.46-.9-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0 1 12 6.8c.85.004 1.71.12 2.51.35 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.85-2.34 4.7-4.57 4.95.36.31.68.92.68 1.85 0 1.33-.01 2.41-.01 2.74 0 .27.16.58.67.48A10.01 10.01 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg></span>GitHub</a>
     </div>
-    <div class="about-content">
-      <h1>About Gemini Chat</h1>
-      <p>Gemini Chat is an interactive chatbot application powered by Google's Gemini AI model, built using LangChain and Django.</p>
-      <p>Our mission is to provide a seamless conversational experience, leveraging state-of-the-art language models for natural and helpful interactions.</p>
-      <p>This project demonstrates how to integrate advanced AI with modern web frameworks for real-world applications.</p>
-      <p>For more details on Gemini AI, visit <a href="https://ai.google.dev/">Google AI</a>.</p>
-      <p>Contact: <a href="mailto:gadityavardhan2004@gmail.com">Aditya Vardhan Gandi</a></p>
+    <div class="home-container">
+      <div class="home-content">
+        <h1>Welcome to Gemini Chat</h1>
+        <p>Start chatting with Gemini, your AI assistant powered by Google Gemini API.</p>
+        <button class="start-btn" onclick="window.location.href='/chat';">Start Chat</button>
+      </div>
     </div>
     <script>
       // Sidebar logic
@@ -327,22 +359,24 @@
           moonIcon.style.display = '';
         }
       }
-      modeSwitch.addEventListener('change', function() {
-        setMode(this.checked);
-        localStorage.setItem('chat_mode', this.checked ? 'light' : 'dark');
-      });
-      (function() {
-        const saved = localStorage.getItem('chat_mode');
-        if (saved === 'light') {
-          modeSwitch.checked = true;
-          setMode(true);
-        } else {
-          modeSwitch.checked = false;
-          setMode(false);
-        }
-      })();
+      if (modeSwitch) {
+        modeSwitch.addEventListener('change', function() {
+          setMode(this.checked);
+          localStorage.setItem('chat_mode', this.checked ? 'light' : 'dark');
+        });
+        (function() {
+          const saved = localStorage.getItem('chat_mode');
+          if (saved === 'light') {
+            modeSwitch.checked = true;
+            setMode(true);
+          } else {
+            modeSwitch.checked = false;
+            setMode(false);
+          }
+        })();
+      }
 
-      // Live wallpaper: techy nodes
+      // Live wallpaper: animated nodes (same as chat.html, but with more nodes)
       (() => {
         const canvas = document.getElementById('live-bg-canvas');
         let w = window.innerWidth, h = window.innerHeight;
@@ -365,7 +399,8 @@
           return document.body.classList.contains('light-mode');
         }
 
-        const NODES = 18;
+        // More lively nodes for home page
+        const NODES = 32;
         const nodes = Array.from({length: NODES}, () => ({
           x: Math.random() * w,
           y: Math.random() * h,
@@ -391,6 +426,7 @@
           ctx.fillRect(0,0,w,h);
           ctx.globalAlpha = 1;
 
+          // Draw lines between close nodes
           for (let i = 0; i < nodes.length; i++) {
             for (let j = i + 1; j < nodes.length; j++) {
               const n1 = nodes[i], n2 = nodes[j];
@@ -408,6 +444,7 @@
             }
           }
 
+          // Draw lines to mouse if close
           for (const n of nodes) {
             const distMouse = Math.hypot(n.x - mouse.x, n.y - mouse.y);
             if (distMouse < 220) {
@@ -422,6 +459,7 @@
             }
           }
 
+          // Draw nodes
           for (const n of nodes) {
             ctx.save();
             ctx.beginPath();
@@ -434,6 +472,7 @@
             ctx.restore();
           }
 
+          // Move nodes, bounce at edges, mouse gravity
           for (const n of nodes) {
             const dx = mouse.x - n.x, dy = mouse.y - n.y;
             const dist = Math.sqrt(dx*dx + dy*dy);
@@ -455,6 +494,7 @@
         }
         animate();
 
+        // React to theme switch
         const observer = new MutationObserver(animate);
         observer.observe(document.body, {attributes: true, attributeFilter: ['class']});
       })();
